@@ -70,6 +70,30 @@ That suite compares the page against what the parser reads from your file, so it
 `dist/` is plain static files, so it can be hosted anywhere, such as GitHub Pages. Serve it rather than
 opening it from disk: some browsers give `file://` pages separate storage.
 
+## Deploying
+
+It's a static site, so there's nothing to run on the server: build it, copy `dist/` over, and let your
+web server serve the files.
+
+```sh
+npm ci && npm run build
+rsync -a --delete dist/ yourserver:/srv/babygraph/
+```
+
+With Caddy, add the block in `deploy/Caddyfile.example` (change the hostname and root). It sets the cache
+headers (hashed assets for a year, pages always revalidate) and a strict Content-Security-Policy, and Caddy
+handles TLS. Any static host works too (GitHub Pages, Netlify, nginx), but you'd need to set those headers there.
+
+No Node on the build machine? Docker can build it and write the files out:
+
+```sh
+docker build --output type=local,dest=./dist .
+```
+
+`.dockerignore` is an allowlist, so a real export in the project folder never ends up in the build.
+
+To run the browser tests against a deployed copy: `E2E_BASE_URL=https://your-host node --test --test-concurrency=1 e2e/*.e2e.js`
+
 ## Project layout
 
 - `index.html` + `src/Landing.vue`: upload page.
@@ -79,6 +103,7 @@ opening it from disk: some browsers give `file://` pages separate storage.
 - `src/lib/photos.js`: IndexedDB storage for photos added to Baby Firsts.
 - `fixtures/`: two fake exports (a girl and a boy, one month each), their expected parser output, and a test photo.
 - `tests/`: importer unit tests. `e2e/`: browser tests.
+- `deploy/Caddyfile.example`: Caddy config for serving `dist/`. `Dockerfile`: optional build without Node.
 - `PLAN.md`: design decisions and test results.
 
 ## License

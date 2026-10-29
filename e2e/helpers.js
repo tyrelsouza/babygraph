@@ -1,5 +1,6 @@
 // Shared setup for the browser tests: a Vite preview server of dist/ and a headless Chromium page.
-// Run with `npm run e2e` (builds first). Set BABYGRAPH_EXPORT=/path/to/export.csv to also test a real export.
+// Run with `npm run e2e` (builds first). Set BABYGRAPH_EXPORT=/path/to/export.csv to also test a real export,
+// and E2E_BASE_URL (e.g. http://127.0.0.1:8090) to test an already-running server such as the Docker container.
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { homedir } from "node:os";
@@ -35,9 +36,12 @@ const freePort = () => new Promise((resolve) => {
 
 // Starts the preview server and browser. Returns helpers bound to one page; call `close()` in `after`.
 export async function setup({ viewport = { width: 1400, height: 1000 }, colorScheme = "light" } = {}) {
-  if (!existsSync(join(ROOT, "dist", "dashboard.html"))) throw new Error("dist/ is missing: run `npm run build` (npm run e2e does this).");
-  const server = await preview({ root: ROOT, logLevel: "silent", preview: { port: await freePort(), strictPort: true } });
-  const base = server.resolvedUrls.local[0].replace(/\/$/, "");
+  let server = null, base = process.env.E2E_BASE_URL?.replace(/\/$/, "");
+  if (!base) {
+    if (!existsSync(join(ROOT, "dist", "dashboard.html"))) throw new Error("dist/ is missing: run `npm run build` (npm run e2e does this).");
+    server = await preview({ root: ROOT, logLevel: "silent", preview: { port: await freePort(), strictPort: true } });
+    base = server.resolvedUrls.local[0].replace(/\/$/, "");
+  }
   const browser = await chromium.launch({ executablePath: chromePath() });
   const context = await browser.newContext({ viewport, colorScheme });
   const page = await context.newPage();
@@ -74,7 +78,7 @@ export async function setup({ viewport = { width: 1400, height: 1000 }, colorSch
     },
     async close() {
       await browser.close();
-      await server.close();
+      if (server) await server.close();
     },
   };
 }

@@ -349,6 +349,17 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
   - Assert on counts, not Playwright element handles. A failing assert on a handle tries to print the whole object and ran the test process out of memory (SIGKILL).
   - `go()` waits for the page title to switch, because the old section's content lingers for a tick.
 
+### Deployment: Caddy serves the files (2026-10-29)
+- **Decision:** no runtime container. The site is static and Caddy already runs on the host, so an nginx container behind Caddy added a process and a port for nothing. A first version did that (unprivileged nginx bound to 127.0.0.1:8090, which passed all tests), but it was replaced.
+- **Deploy:** `npm ci && npm run build`, then `rsync -a --delete dist/ server:/srv/babygraph/`.
+- **`deploy/Caddyfile.example`:**
+  - `file_server` with `encode zstd gzip`;
+  - CSP, nosniff, no-referrer and Permissions-Policy headers, and the `Server` header removed;
+  - `/assets/*` cached for a year (immutable), everything else `no-cache`;
+  - `LICENSE` and `*.md` served as text/plain.
+- **`Dockerfile`** is build-only and optional: `docker build --output type=local,dest=./dist .` writes `dist/` through a `scratch` export stage. `.dockerignore` is an allowlist, so the real CSV can't enter the build context.
+- **Verified:** with `caddy:2-alpine` serving the Docker-built `dist/` through the example Caddyfile, the status codes, content types, cache headers, CSP and gzip are all correct, and all 46 e2e tests plus the real-export suite pass against it (`E2E_BASE_URL`).
+
 ### Licensing (2026-10-29)
 - The project is MIT (`LICENSE`, Tyrel Souza). The project is named **Babygraph** (package `babygraph`); the repo isn't created yet.
 - `NOTICE.md` covers what the generated list can't:

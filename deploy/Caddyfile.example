@@ -1,0 +1,26 @@
+# Babygraph is static files: build it (npm run build), copy dist/ to the root below, and Caddy serves it.
+# Replace the hostname and root; Caddy gets the TLS certificate automatically.
+babygraph.example.com {
+	root * /srv/babygraph
+	encode zstd gzip
+	file_server
+
+	header {
+		# Everything is same-origin; data: and blob: cover the inline favicon, Tabler's form icons and
+		# added photos. Inline styles are needed for Vue style bindings and ApexCharts.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# Hashed build files never change: cache for a year. Pages always revalidate, so a deploy shows up immediately.
+	header /assets/* Cache-Control "public, max-age=31536000, immutable"
+	@pages not path /assets/*
+	header @pages Cache-Control "no-cache"
+
+	# License and notice files, shown as text in the browser
+	@text path /LICENSE /*.md
+	header @text Content-Type "text/plain; charset=utf-8"
+}

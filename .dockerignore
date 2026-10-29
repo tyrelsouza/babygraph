@@ -1,0 +1,12 @@
+# Allowlist: only what the build needs gets into the image. This also guarantees a real
+# export (export_narababy_*.csv) sitting in the folder can never be copied in.
+*
+!package.json
+!package-lock.json
+!index.html
+!dashboard.html
+!vite.config.js
+!src
+!LICENSE
+!NOTICE.md
+!deploy
