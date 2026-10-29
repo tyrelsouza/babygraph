@@ -91,6 +91,10 @@ npm ci && npm run build
 rsync -a --delete dist/ yourserver:/srv/babygraph/
 ```
 
+`npm run build` only runs on a clean working tree (no staged, modified or untracked files), and the landing
+page footer links to the commit it was built from, so you can always tell exactly what's deployed. For a quick
+local build with uncommitted changes, `npx vite build` works and marks the footer "+ local changes".
+
 With Caddy, add the block in `deploy/Caddyfile.example` (change the hostname and root). It sets the cache
 headers (hashed assets for a year, pages always revalidate) and a strict Content-Security-Policy, and Caddy
 handles TLS. Any static host works too (GitHub Pages, Netlify, nginx), but you'd need to set those headers there.
@@ -98,7 +102,7 @@ handles TLS. Any static host works too (GitHub Pages, Netlify, nginx), but you'd
 No Node on the build machine? Docker can build it and write the files out:
 
 ```sh
-docker build --output type=local,dest=./dist .
+docker build --build-arg BUILD_COMMIT=$(git rev-parse HEAD) --output type=local,dest=./dist .
 ```
 
 `.dockerignore` is an allowlist, so a real export in the project folder never ends up in the build.

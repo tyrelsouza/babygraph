@@ -1,5 +1,6 @@
 // Landing page, upload errors, drag-and-drop, and the New upload flow.
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { after, before, test } from "node:test";
 import { BOY, GIRL, setup } from "./helpers.js";
@@ -79,6 +80,19 @@ test("the privacy policy is linked, and links to the Caddy config on GitHub", as
   await t.page.click("footer a[href='./privacy.html'], .card-footer a[href='./privacy.html']");
   await t.page.waitForSelector("h1:text('Privacy policy')");
   assert.equal(await t.count('a[href="https://github.com/tyrelsouza/babygraph/blob/main/deploy/Caddyfile.example"]'), 1);
+});
+
+test("the footer links to the commit it was built from, flagging uncommitted changes", async () => {
+  const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+  let head;
+  try { head = git("rev-parse", "HEAD"); } catch { return; } // no commits: nothing to show
+  if (process.env.E2E_BASE_URL) return; // a deployed copy may be from another commit
+  await t.page.goto(t.url("/index.html"));
+  const link = t.page.locator("[data-build] a");
+  assert.equal(await link.getAttribute("href"), `https://github.com/tyrelsouza/babygraph/commit/${head}`);
+  assert.equal((await link.textContent()).trim(), head.slice(0, 7));
+  const dirty = git("status", "--porcelain") !== "";
+  assert.equal((await t.page.textContent("[data-build]")).includes("+ local changes"), dirty);
 });
 
 test("nothing is sent anywhere: only GETs for the site's own files, no request bodies, no cookies", async () => {
