@@ -1,0 +1,66 @@
+/* Chart tokens (dataviz reference palette); dark steps are selected, not flipped */
+:root {
+  --series-breast: #2a78d6;
+  --series-bottle: #eb6834;
+  --series-weight: #2a78d6;
+  --series-length: #eb6834;
+  --series-head:   #1baf7a;
+  --series-bmi:    #6250d6;
+  --series-sleep:  #1baf7a;
+  --series-diaper: #eda100;
+  --ref-line:      #b5b3ab;
+  --ref-median:    #898781;
+  --chart-grid:    #e1e0d9;
+  --chart-axis:    #898781;
+  --chart-text:    #52514e;
+}
+[data-bs-theme="dark"] {
+  --series-breast: #3987e5;
+  --series-bottle: #d95926;
+  --series-weight: #3987e5;
+  --series-length: #d95926;
+  --series-head:   #199e70;
+  --series-bmi:    #9085e9;
+  --series-sleep:  #199e70;
+  --series-diaper: #c98500;
+  --ref-line:      #4a4a46;
+  --ref-median:    #898781;
+  --chart-grid:    #2c2c2a;
+  --chart-axis:    #898781;
+  --chart-text:    #c3c2b7;
+}
+body { background: var(--tblr-body-bg); }
+.swatch { display: inline-block; width: .75rem; height: .75rem; border-radius: 3px; vertical-align: -1px; margin-right: .35rem; }
+.stat-value { font-size: 1.5rem; font-weight: 600; line-height: 1.2; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ApexCharts tooltips render outside Vue components, so these stay global */
+.apexcharts-tooltip.apexcharts-theme-light,
+.apexcharts-tooltip.apexcharts-theme-dark { border-radius: 6px; }
+.growth-tip { padding: .5rem .75rem; font-size: .8125rem; }
+.growth-tip .label { color: var(--tblr-secondary); }
+
+/* Loading skeletons (ChartSkeleton, section skeletons) */
+.chart-skeleton, .skeleton-line {
+  position: relative; overflow: hidden; border-radius: 4px;
+  background-color: var(--tblr-bg-surface-secondary);
+}
+.chart-skeleton {
+  pointer-events: none; /* it fades out over the live chart; don't block the first drag or hover */
+  background-image: repeating-linear-gradient(to bottom, transparent 0 calc(25% - 1px), var(--chart-grid) calc(25% - 1px) 25%);
+}
+.skeleton-line { display: block; height: .75rem; }
+.chart-skeleton::after, .skeleton-line::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tblr-bg-surface) 55%, transparent), transparent);
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) {
+  .chart-skeleton::after, .skeleton-line::after { animation: none; display: none; }
+}
+/* Skeleton → chart: the skeleton fades out over the drawn chart instead of vanishing */
+.skeleton-fade-leave-active { transition: opacity .25s ease; }
+.skeleton-fade-leave-to { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .skeleton-fade-leave-active { transition: none; } }

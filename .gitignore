@@ -1,0 +1,7 @@
+# Real child data: never commit. Use fixtures/narababy_fake_*_export.csv for tests and demos.
+export_narababy_*.csv
+public/data/narababy.js
+
+node_modules/
+dist/
+e2e/.output/
