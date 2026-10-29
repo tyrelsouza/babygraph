@@ -112,8 +112,8 @@ watch(shown, () => { error.value = null; });
       <div class="alert alert-info mb-3" role="note">
         <div>
           NaraBaby's export leaves out photos, so {{ hadPhotoCount }} of these entries lost theirs.
-          You can add them back here. <strong>Photos stay in this browser only</strong>: they aren't uploaded,
-          and clearing site data or switching browsers loses them, so keep the originals.
+          You can attach them here. <strong>Photos are saved in this browser's storage only</strong>, never uploaded,
+          so clearing site data, switching browsers or attaching a new export loses them. Keep the originals.
         </div>
       </div>
 

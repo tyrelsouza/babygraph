@@ -397,6 +397,13 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
 - If an export is already stored, it asks before replacing it. Added photos are kept; ones that don't match the demo show up as orphans in Firsts, same as any other new upload.
 - e2e: the demo loads Test Boy with the demo label; with an export stored, cancelling the confirm leaves it alone and accepting replaces it.
 
+### Photos removed by default; "attach", not "upload" (2026-10-29)
+- **Decision:** clearing the export now removes attached photos by default, so nobody thinks I keep them. The modal's "Also remove the N photos you attached" box starts checked; unchecking keeps them for the next export.
+- The demo button also clears photos, and its confirm says how many.
+- User-facing "upload" is now "attach" ("Attach new export", "Attach a new export?", "Clear"), since upload sounds like it goes to a server. "Nothing is uploaded" stays as is.
+- The modal and the Firsts note say the data is only in this browser's local storage, never uploaded, so clearing it means it's gone.
+- e2e updated: default checked, uncheck keeps photos, demo clears photos. 53 tests pass.
+
 ### Deployment: Caddy serves the files (2026-10-29)
 - **Decision:** no runtime container. The site is static and Caddy already runs on the host, so an nginx container behind Caddy added a process and a port for nothing. A first version did that (unprivileged nginx bound to 127.0.0.1:8090, which passed all tests), but it was replaced.
 - **Deploy:** `npm ci && npm run build`, then `rsync -a --delete dist/ server:/srv/babygraph/`.
@@ -531,7 +538,7 @@ The sidebar layout (one section at a time) is built. Baby's Firsts (with photos 
    - A non-NaraBaby CSV and a non-`.csv` file each show an error and stay on the page.
    - Dropping a fake fixture redirects to `dashboard.html#/overview` showing Test Girl or Test Boy. Growth shows the WHO curves for that child's sex, with monthly age ticks.
    - Picking the real export shows 5,073 feeds (the last at about 14 months). Feeding and Growth render 10 charts between them, and about 391 KB is stored.
-   - "New upload": Escape or Cancel keeps the data; "Clear and upload" lands on `index.html?cleared` with the notice and storage emptied.
+   - "Attach new export": Escape or Cancel keeps the data; "Clear" lands on `index.html?cleared` with the notice and storage emptied.
    - The landing page offers "Open dashboard" when an import is stored.
    - No console errors.
 3. Unit check: the 3.502 kg row at about 4 weeks falls between its neighbours four days before (≈3.39 kg) and one day after (≈3.49 kg).

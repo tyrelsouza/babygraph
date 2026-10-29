@@ -1,4 +1,4 @@
-// Firsts (with photos stored in IndexedDB), Health, and photos surviving or clearing on New upload.
+// Firsts (with photos stored in IndexedDB), Health, and photos clearing or surviving on Attach new export.
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { BOY, GIRL, PHOTO, setup } from "./helpers.js";
@@ -107,12 +107,13 @@ test("the medicine filter narrows rows", async () => {
   await page.selectOption("select[aria-label='Filter by medicine']", "");
 });
 
-// ----- photos across New upload -----
-test("New upload offers to remove photos, unchecked; unchecked keeps them", async () => {
-  await page.click("text=New upload");
-  await page.waitForSelector("text=Also remove the 1 photo you added");
-  assert.equal(await page.isChecked(".modal input[type=checkbox]"), false);
-  await page.click("text=Clear and upload");
+// ----- photos across Attach new export -----
+test("Attach new export removes photos by default; unchecking keeps them", async () => {
+  await page.click("text=Attach new export");
+  await page.waitForSelector("text=Also remove the 1 photo you attached");
+  assert.equal(await page.isChecked(".modal input[type=checkbox]"), true);
+  await page.uncheck(".modal input[type=checkbox]");
+  await page.click(".modal button:has-text('Clear')");
   await page.waitForURL(/index\.html\?cleared/);
   await t.upload(GIRL);
   await t.go("firsts", "img.thumb");
@@ -129,7 +130,7 @@ test("a photo whose entry isn't in the export is reported and removable", async 
   assert.equal(await storedPhotoCount(), 0);
 });
 
-test("Remove deletes a photo, and the checked box clears all photos", async () => {
+test("Remove deletes a photo, and the default checked box clears all photos", async () => {
   await page.evaluate(() => localStorage.removeItem("nara-import"));
   await t.upload(GIRL);
   await t.go("firsts", "article.first-card");
@@ -139,9 +140,8 @@ test("Remove deletes a photo, and the checked box clears all photos", async () =
   await page.waitForSelector("img.thumb", { state: "detached" });
   await addPhotoVia('button[aria-label="Add photo: First laugh"]');
   await page.waitForSelector("img.thumb");
-  await page.click("text=New upload");
-  await page.check(".modal input[type=checkbox]");
-  await page.click("text=Clear and upload");
+  await page.click("text=Attach new export");
+  await page.click(".modal button:has-text('Clear')");
   await page.waitForURL(/index\.html\?cleared/);
   assert.equal(await storedPhotoCount(), 0);
 });
@@ -151,6 +151,20 @@ test("an import stored by an older version asks for a re-upload", async () => {
   await page.evaluate(() => { const r = JSON.parse(localStorage.getItem("nara-import")); r.version = 1; localStorage.setItem("nara-import", JSON.stringify(r)); });
   await page.goto(t.url("/dashboard.html?v1#/firsts")); // a new query forces a real reload
   await page.waitForURL(/index\.html/);
+});
+
+test("the demo button asks, then clears attached photos along with the export", async () => {
+  await t.upload(GIRL);
+  await t.go("firsts", "article.first-card");
+  await addPhotoVia('button[aria-label="Add photo: First laugh"]');
+  await page.waitForSelector("img.thumb");
+  await page.goto(t.url("/index.html"));
+  let message = "";
+  page.once("dialog", (d) => { message = d.message(); d.accept(); });
+  await page.click("text=Try it with demo data");
+  await page.waitForURL(/dashboard\.html/);
+  assert.match(message, /the 1 photo you attached/);
+  assert.equal(await storedPhotoCount(), 0);
 });
 
 test("phone width: Firsts doesn't scroll sideways", async () => {

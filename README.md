@@ -46,12 +46,12 @@ and any photos you add are stored in IndexedDB.
   someone loaded the page, but it never gets your export or photos.
 - The Caddy config sets a Content-Security-Policy that blocks connections to other sites, and
   `npm run e2e` checks that uploading and browsing only ever fetch the site's own files.
-- You can check for yourself: open the network tab in your browser's dev tools while you upload.
+- You can check for yourself: open the network tab in your browser's dev tools while you attach your export.
 - The full policy is on the site at `privacy.html` ([source](src/Privacy.vue)). Any server logging is ordinary
   request logging (time, IP, file, user agent), and the example Caddy config doesn't enable access logs.
 
 Because it's all local, the data lives only in that browser. Clearing site data or switching browsers means
-uploading the export again, and photos you added need re-adding, so keep your originals.
+attaching the export again, and photos you attached need re-adding, so keep your originals.
 
 No export? "Try it with demo data" on the landing page loads the fake boy export from `fixtures/`. It's
 bundled with the site and only downloaded when you click, so it's still just the site's own files.
@@ -114,7 +114,7 @@ To run the browser tests against a deployed copy: `E2E_BASE_URL=https://your-hos
 
 ## Project layout
 
-- `index.html` + `src/Landing.vue`: upload page. `privacy.html` + `src/Privacy.vue`: privacy policy.
+- `index.html` + `src/Landing.vue`: landing page. `privacy.html` + `src/Privacy.vue`: privacy policy.
 - `dashboard.html` + `src/App.vue`: sidebar dashboard, one section at a time (`src/sections/`).
 - `src/lib/importer.js`: parses the NaraBaby CSV into the dashboard's data shape.
 - `src/lib/who.js`, `src/lib/growth.js`: WHO LMS z-scores and percentiles; tables in `src/data/who_lms.json`.

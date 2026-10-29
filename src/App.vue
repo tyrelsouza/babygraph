@@ -36,15 +36,16 @@ watch(() => section.value.name, async (name, prev) => {
   heading.value && heading.value.focus({ preventScroll: true }); // announce the new section
 }, { immediate: true });
 
-// ----- "New upload": confirm, then clear the stored export and go back to the landing page -----
-// Added photos survive by default: they re-link to the same Baby Firsts in a newer export.
+// ----- "Attach new export": confirm, then clear the stored export and go back to the landing page -----
+// Attached photos are removed by default, so nobody's left thinking they're kept somewhere. Unchecking keeps
+// them, and they re-link to the same Baby Firsts in a newer export.
 const confirmOpen = ref(false);
 const cancelButton = ref(null);
 const photoCount = ref(0);
-const alsoPhotos = ref(false);
+const alsoPhotos = ref(true);
 watch(confirmOpen, async (open) => {
   if (!open) return;
-  alsoPhotos.value = false;
+  alsoPhotos.value = true;
   countPhotos().then((n) => { photoCount.value = n; }, () => { photoCount.value = 0; });
   await nextTick();
   cancelButton.value.focus();
@@ -100,7 +101,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
               </svg>
               <span>Your data only lives in this browser. Nothing is uploaded, and there's no analytics. <a href="./privacy.html">Privacy</a></span>
             </div>
-            <button class="btn btn-outline-secondary btn-sm" type="button" @click="confirmOpen = true">New upload</button>
+            <button class="btn btn-outline-secondary btn-sm" type="button" @click="confirmOpen = true">Attach new export</button>
             <button class="btn btn-ghost-secondary btn-sm" type="button" @click="toggleTheme"
                     :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
               {{ theme === 'dark' ? 'Light mode' : 'Dark mode' }}
@@ -133,26 +134,27 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
 
     <template v-if="confirmOpen">
       <div class="modal modal-blur d-block" tabindex="-1" role="dialog" aria-modal="true"
-           aria-labelledby="new-upload-title" aria-describedby="new-upload-body" @click.self="confirmOpen = false">
+           aria-labelledby="new-export-title" aria-describedby="new-export-body" @click.self="confirmOpen = false">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-status bg-danger"></div>
             <div class="modal-body text-center py-4">
-              <h3 id="new-upload-title">Start a new upload?</h3>
-              <div id="new-upload-body" class="text-secondary">
-                This removes the loaded export from this browser. You'll need to upload a NaraBaby export again to see the dashboard.
+              <h3 id="new-export-title">Attach a new export?</h3>
+              <div id="new-export-body" class="text-secondary">
+                Your export is only in this browser's local storage, never uploaded, so clearing it here means it's gone.
+                You'll need to attach a NaraBaby export again to see the dashboard.
               </div>
               <label v-if="photoCount" class="form-check text-start mt-3 mb-0">
                 <input class="form-check-input" type="checkbox" v-model="alsoPhotos" />
-                <span class="form-check-label">Also remove the {{ photoCount }} photo{{ photoCount === 1 ? '' : 's' }} you added</span>
-                <span class="form-hint">If kept, they reappear on the same Baby Firsts after the next upload.</span>
+                <span class="form-check-label">Also remove the {{ photoCount }} photo{{ photoCount === 1 ? '' : 's' }} you attached</span>
+                <span class="form-hint">Photos are only in this browser too. Uncheck to keep them for your next export.</span>
               </label>
             </div>
             <div class="modal-footer">
               <div class="w-100">
                 <div class="row">
                   <div class="col"><button ref="cancelButton" type="button" class="btn w-100" @click="confirmOpen = false">Cancel</button></div>
-                  <div class="col"><button type="button" class="btn btn-danger w-100" @click="startOver">Clear and upload</button></div>
+                  <div class="col"><button type="button" class="btn btn-danger w-100" @click="startOver">Clear</button></div>
                 </div>
               </div>
             </div>

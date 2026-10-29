@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { fmtDate } from "./lib/format.js";
 import { ImportError, parseNaraExport } from "./lib/importer.js";
+import { clearPhotos, countPhotos } from "./lib/photos.js";
 import { BUILD, commitUrl } from "./lib/site.js";
 import { loadImport, saveImport } from "./lib/storage.js";
 import { theme, toggleTheme } from "./lib/theme.js";
@@ -34,10 +35,13 @@ async function handleFile(file) {
 // The fake boy export from fixtures/, bundled as its own chunk so it only downloads when asked for
 const DEMO_NAME = "Demo data (Test Boy, made up)";
 async function loadDemo() {
-  if (stored && !window.confirm("Load the demo? It replaces the export loaded in this browser. Photos you added are kept.")) return;
+  const photos = await countPhotos().catch(() => 0);
+  const what = photos ? `your export and the ${photos} photo${photos === 1 ? "" : "s"} you attached` : "your export";
+  if ((stored || photos) && !window.confirm(`Load the demo? This clears ${what} from this browser.`)) return;
   error.value = "";
   busy.value = true;
   try {
+    if (photos) await clearPhotos();
     const { default: csv } = await import("../fixtures/narababy_fake_boy_export.csv?raw");
     saveImport(parseNaraExport(csv, DEMO_NAME), DEMO_NAME);
     window.location.assign("./dashboard.html");
@@ -74,7 +78,7 @@ const openPicker = () => !busy.value && fileInput.value.click();
       </div>
 
       <div v-if="cleared" class="alert alert-info" role="status">
-        The previous export was removed from this browser. Upload an export to see the dashboard again.
+        The previous export was removed from this browser. Attach an export to see the dashboard again.
       </div>
 
       <div class="card card-md">
@@ -122,7 +126,7 @@ const openPicker = () => !busy.value && fileInput.value.click();
                 <a href="./privacy.html">Privacy policy</a>
               </div>
               <div class="small text-secondary mt-1">
-                You can check: open your browser's network tab while you upload. You'll only see the page's own
+                You can check: open your browser's network tab while you attach your export. You'll only see the page's own
                 files load, never your data going out.
               </div>
             </div>
