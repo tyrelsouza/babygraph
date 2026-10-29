@@ -11,6 +11,14 @@ same rows, units are mixed, and photos aren't included.
 
 This parses that export and shows the data you've been logging, instead of leaving it as an idle backup.
 
+## Screenshots
+
+From the fake test export (`fixtures/narababy_fake_girl_export.csv`). Every section is in
+[`docs/screenshots/`](docs/screenshots/); regenerate them with `npm run screenshots`.
+
+![Overview](docs/screenshots/01-overview.png)
+![Feeding](docs/screenshots/03-feeding.png)
+
 ## What it shows
 
 - **Overview**: totals, the latest growth percentiles and recent Baby Firsts.

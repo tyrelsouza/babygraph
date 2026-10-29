@@ -109,6 +109,16 @@ test("navigating focuses the section heading and marks the link current", async 
   assert.equal(await page.getAttribute('aside a.nav-link[href="#/measurements"]', "aria-current"), "page");
 });
 
+test("resizing the window then switching section right away logs no chart errors", async () => {
+  await t.go("feeding", "[aria-busy]");
+  await page.waitForFunction(() => !document.querySelector("[aria-busy=true]"));
+  await page.setViewportSize({ width: 1200, height: 1000 });
+  await t.go("growth", ".apexcharts-canvas"); // within ApexCharts' 150 ms resize delay
+  await page.waitForTimeout(400);
+  await page.setViewportSize({ width: 1400, height: 1000 });
+  assert.deepEqual(t.errors, []);
+});
+
 test("phone width: menu toggles, closes on choosing, no sideways scroll", async () => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto(t.url("/dashboard.html#/overview"));

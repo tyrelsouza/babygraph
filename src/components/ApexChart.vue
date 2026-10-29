@@ -43,7 +43,12 @@ onBeforeUnmount(() => {
   unmounted = true;
   cancel && cancel();
   observer && observer.disconnect();
-  chart && chart.destroy();
+  if (chart) {
+    // ApexCharts 3 redraws 150 ms after a window resize and destroy() doesn't cancel that,
+    // so resizing then switching section logged NaN-size SVG errors from the dead chart
+    clearTimeout(chart.w.globals.resizeTimer);
+    chart.destroy();
+  }
 });
 </script>
 
