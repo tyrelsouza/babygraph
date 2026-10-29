@@ -3,12 +3,12 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
-// Ships LICENSE and NOTICE.md (WHO data, Tabler Icons) with the built site
+// Ships LICENSE, NOTICE.md (WHO data, Tabler Icons) and the Caddy config (linked from the privacy policy)
 const licenseFiles = {
   name: "license-files",
   generateBundle() {
-    for (const fileName of ["LICENSE", "NOTICE.md"]) {
-      this.emitFile({ type: "asset", fileName, source: readFileSync(resolve(import.meta.dirname, fileName), "utf8") });
+    for (const [fileName, from] of [["LICENSE", "LICENSE"], ["NOTICE.md", "NOTICE.md"], ["Caddyfile.example", "deploy/Caddyfile.example"]]) {
+      this.emitFile({ type: "asset", fileName, source: readFileSync(resolve(import.meta.dirname, from), "utf8") });
     }
   },
 };
@@ -22,6 +22,7 @@ export default defineConfig({
       input: {
         index: resolve(import.meta.dirname, "index.html"),         // landing page: drop an export
         dashboard: resolve(import.meta.dirname, "dashboard.html"), // reads the stored import
+        privacy: resolve(import.meta.dirname, "privacy.html"),     // privacy policy
       },
     },
   },

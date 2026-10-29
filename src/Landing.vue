@@ -84,9 +84,24 @@ const openPicker = () => !busy.value && fileInput.value.click();
 
           <div v-if="error" class="alert alert-danger mt-3 mb-0" role="alert">{{ error }}</div>
 
-          <p class="text-secondary small mt-3 mb-0">
-            Your file stays in this browser. It's read on this device and saved to local storage; nothing is uploaded.
-          </p>
+          <div class="local-only mt-3" role="note" aria-labelledby="local-title">
+            <svg class="local-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" />
+            </svg>
+            <div>
+              <div id="local-title" class="fw-bold">Everything stays on your device</div>
+              <div class="small">
+                Your export is read by your browser and saved in this browser's storage. It's never uploaded to my
+                server or anyone else's. No accounts, no cookies, no analytics or tracking.
+                <a href="./privacy.html">Privacy policy</a>
+              </div>
+              <div class="small text-secondary mt-1">
+                You can check: open your browser's network tab while you upload. You'll only see the page's own
+                files load, never your data going out.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -113,7 +128,7 @@ const openPicker = () => !busy.value && fileInput.value.click();
         </div>
         <div class="card-footer small text-secondary">
           Unofficial; not affiliated with NaraBaby. Free and open source (MIT).
-          <a href="./NOTICE.md">Notices</a> · <a href="./THIRD-PARTY-LICENSES.md">Licenses</a>
+          <a href="./privacy.html">Privacy</a> · <a href="./NOTICE.md">Notices</a> · <a href="./THIRD-PARTY-LICENSES.md">Licenses</a>
         </div>
       </section>
     </div>
@@ -136,4 +151,11 @@ const openPicker = () => !busy.value && fileInput.value.click();
 }
 .dropzone.is-busy { cursor: progress; opacity: .7; }
 .dropzone-icon { color: var(--tblr-secondary); }
+.local-only {
+  display: flex; gap: .75rem; align-items: flex-start;
+  padding: .875rem 1rem; border-radius: 8px;
+  border: 1px solid rgba(var(--tblr-green-rgb), .35);
+  background: rgba(var(--tblr-green-rgb), .08);
+}
+.local-icon { flex-shrink: 0; color: var(--tblr-green); margin-top: .1rem; }
 </style>

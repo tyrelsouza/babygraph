@@ -93,6 +93,13 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
             </template>
           </ul>
           <div class="mt-lg-auto d-flex flex-column gap-2 px-lg-3 py-3">
+            <div class="local-note small text-secondary d-flex gap-2 align-items-start">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="flex-shrink-0 mt-1">
+                <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" />
+              </svg>
+              <span>Your data only lives in this browser. Nothing is uploaded, and there's no analytics. <a href="./privacy.html">Privacy</a></span>
+            </div>
             <button class="btn btn-outline-secondary btn-sm" type="button" @click="confirmOpen = true">New upload</button>
             <button class="btn btn-ghost-secondary btn-sm" type="button" @click="toggleTheme"
                     :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
@@ -118,6 +125,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
           <footer class="text-secondary small py-4">
             Growth reference: WHO Child Growth Standards (2006), LMS method; restricted z‑scores for weight and BMI beyond ±3 SD.
             Counts reflect what was logged in the app, not necessarily every event.
+            <a href="./privacy.html">Privacy policy</a>
           </footer>
         </div>
       </div>
@@ -158,6 +166,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
 
 <style scoped>
 .page-title:focus { outline: none; }
+.local-note { line-height: 1.4; }
 .nav-group-heading {
   padding: 1rem var(--tblr-navbar-nav-link-padding-x, .75rem) .25rem;
   font-size: .625rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;

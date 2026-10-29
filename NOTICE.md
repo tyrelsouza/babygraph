@@ -209,7 +209,7 @@ Methods and development.* Geneva: World Health Organization, 2006.
 
 ## Tabler Icons
 
-The sidebar and section icons (SVG paths in `src/sections/index.js`) are from Tabler Icons,
+The icons (SVG paths in `src/sections/index.js`, `src/App.vue` and `src/Landing.vue`) are from Tabler Icons,
 https://tabler.io/icons
 
 ```

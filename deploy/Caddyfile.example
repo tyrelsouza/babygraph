@@ -20,7 +20,7 @@ babygraph.example.com {
 	@pages not path /assets/*
 	header @pages Cache-Control "no-cache"
 
-	# License and notice files, shown as text in the browser
-	@text path /LICENSE /*.md
+	# License, notice and this config file, shown as text in the browser
+	@text path /LICENSE /*.md /Caddyfile.example
 	header @text Content-Type "text/plain; charset=utf-8"
 }

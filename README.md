@@ -35,11 +35,22 @@ From the fake test export (`fixtures/narababy_fake_girl_export.csv`). Every sect
 
 Health is a record of what was logged, not medical advice.
 
-## Privacy
+## Privacy: everything is local
 
-Everything happens in your browser. The CSV is parsed on your device and kept in `localStorage`,
-and any photos you add are stored in IndexedDB. Nothing is uploaded, and there's no backend. That
-also means the data lives only in that browser: clearing site data or switching browsers means
+**Your data never leaves your browser.** The CSV is parsed on your device and kept in `localStorage`,
+and any photos you add are stored in IndexedDB.
+
+- Nothing is uploaded. There's no backend, and the app makes no network requests with your data.
+- No accounts, no cookies, no analytics or tracking scripts.
+- If you use the hosted copy, my server only sends the page's files. Like any web server it can see that
+  someone loaded the page, but it never gets your export or photos.
+- The Caddy config sets a Content-Security-Policy that blocks connections to other sites, and
+  `npm run e2e` checks that uploading and browsing only ever fetch the site's own files.
+- You can check for yourself: open the network tab in your browser's dev tools while you upload.
+- The full policy is on the site at `privacy.html` ([source](src/Privacy.vue)). Any server logging is ordinary
+  request logging (time, IP, file, user agent), and the example Caddy config doesn't enable access logs.
+
+Because it's all local, the data lives only in that browser. Clearing site data or switching browsers means
 uploading the export again, and photos you added need re-adding, so keep your originals.
 
 Real exports are never committed: `.gitignore` excludes `export_narababy_*.csv`.
@@ -96,7 +107,7 @@ To run the browser tests against a deployed copy: `E2E_BASE_URL=https://your-hos
 
 ## Project layout
 
-- `index.html` + `src/Landing.vue`: upload page.
+- `index.html` + `src/Landing.vue`: upload page. `privacy.html` + `src/Privacy.vue`: privacy policy.
 - `dashboard.html` + `src/App.vue`: sidebar dashboard, one section at a time (`src/sections/`).
 - `src/lib/importer.js`: parses the NaraBaby CSV into the dashboard's data shape.
 - `src/lib/who.js`, `src/lib/growth.js`: WHO LMS z-scores and percentiles; tables in `src/data/who_lms.json`.
