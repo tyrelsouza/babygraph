@@ -69,7 +69,7 @@ const UPDATED = "October 29, 2026";
 
       <h2 class="h3">Deleting your data</h2>
       <p>
-        "Attach new export" in the dashboard sidebar clears the export and, by default, your photos. Clearing this
+        "Reset and Clear" in the dashboard sidebar clears the export and, by default, your photos. Clearing this
         site's data in your browser settings removes everything.
       </p>
 

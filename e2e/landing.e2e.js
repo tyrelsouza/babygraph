@@ -1,4 +1,4 @@
-// Landing page, import errors, drag-and-drop, and the Attach new export flow.
+// Landing page, import errors, drag-and-drop, and the Reset and Clear flow.
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -42,8 +42,8 @@ test("dropping an export opens its dashboard", async () => {
   assert.match(await t.page.textContent(".navbar-brand"), /Test Girl/);
 });
 
-test("Attach new export modal focuses Cancel, and Escape closes it keeping the data", async () => {
-  await t.page.click("text=Attach new export");
+test("Reset and Clear modal focuses Cancel, and Escape closes it keeping the data", async () => {
+  await t.page.click("text=Reset and Clear");
   await t.page.waitForSelector(".modal-dialog");
   assert.equal(await t.page.evaluate(() => document.activeElement.textContent.trim()), "Cancel");
   await t.page.keyboard.press("Escape");
@@ -52,7 +52,7 @@ test("Attach new export modal focuses Cancel, and Escape closes it keeping the d
 });
 
 test("Clear removes the data and shows a notice", async () => {
-  await t.page.click("text=Attach new export");
+  await t.page.click("text=Reset and Clear");
   await t.page.click(".modal button:has-text('Clear')");
   await t.page.waitForURL(/index\.html\?cleared$/);
   assert.match(await t.page.textContent(".alert-info"), /removed/);

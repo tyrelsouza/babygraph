@@ -346,7 +346,7 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
   - It's stored in **IndexedDB**, keyed by the entry's `id`. `localStorage` is too small for images.
   - Replace and remove are available per photo.
   - Estimated total for about 130 photos: 20–30 MB.
-- **Photos outlive a "New upload":** they take effort to add, and they re-link automatically to the same entries from a newer export.
+- **Photos outlive a "New upload":** (superseded: removed by default now, see below) they take effort to add, and they re-link automatically to the same entries from a newer export.
   - The confirmation modal gains an unchecked option, "Also remove the N photos you added". The data itself is still cleared as before.
   - Photos whose entry isn't in the current import are kept, and reported on the Firsts page ("3 photos belong to entries not in this export"), with a button to remove them.
 - **Backup warning:** photos live only in this browser, so clearing site data or switching browsers loses them. The Firsts page says so plainly. "Download added photos" (a zip named by date and title) is listed under Later.
@@ -400,7 +400,7 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
 ### Photos removed by default; "attach", not "upload" (2026-10-29)
 - **Decision:** clearing the export now removes attached photos by default, so nobody thinks I keep them. The modal's "Also remove the N photos you attached" box starts checked; unchecking keeps them for the next export.
 - The demo button also clears photos, and its confirm says how many.
-- User-facing "upload" is now "attach" ("Attach new export", "Attach a new export?", "Clear"), since upload sounds like it goes to a server. "Nothing is uploaded" stays as is.
+- User-facing "upload" is now "attach" or "load", since upload sounds like it goes to a server. The sidebar button is "Reset and Clear" ("Attach new export" read like it would add a second export, and "Reset and Clear" was unclear), the dialog asks "Reset and clear this export?", and its button is "Clear". "Nothing is uploaded" stays as is.
 - The modal and the Firsts note say the data is only in this browser's local storage, never uploaded, so clearing it means it's gone.
 - e2e updated: default checked, uncheck keeps photos, demo clears photos. 53 tests pass.
 
@@ -538,7 +538,7 @@ The sidebar layout (one section at a time) is built. Baby's Firsts (with photos 
    - A non-NaraBaby CSV and a non-`.csv` file each show an error and stay on the page.
    - Dropping a fake fixture redirects to `dashboard.html#/overview` showing Test Girl or Test Boy. Growth shows the WHO curves for that child's sex, with monthly age ticks.
    - Picking the real export shows 5,073 feeds (the last at about 14 months). Feeding and Growth render 10 charts between them, and about 391 KB is stored.
-   - "Attach new export": Escape or Cancel keeps the data; "Clear" lands on `index.html?cleared` with the notice and storage emptied.
+   - "Reset and Clear": Escape or Cancel keeps the data; "Clear" lands on `index.html?cleared` with the notice and storage emptied.
    - The landing page offers "Open dashboard" when an import is stored.
    - No console errors.
 3. Unit check: the 3.502 kg row at about 4 weeks falls between its neighbours four days before (≈3.39 kg) and one day after (≈3.49 kg).

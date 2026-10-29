@@ -1,4 +1,4 @@
-// Firsts (with photos stored in IndexedDB), Health, and photos clearing or surviving on Attach new export.
+// Firsts (with photos stored in IndexedDB), Health, and photos clearing or surviving on Reset and Clear.
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { BOY, GIRL, PHOTO, setup } from "./helpers.js";
@@ -107,9 +107,9 @@ test("the medicine filter narrows rows", async () => {
   await page.selectOption("select[aria-label='Filter by medicine']", "");
 });
 
-// ----- photos across Attach new export -----
-test("Attach new export removes photos by default; unchecking keeps them", async () => {
-  await page.click("text=Attach new export");
+// ----- photos across Reset and Clear -----
+test("Reset and Clear removes photos by default; unchecking keeps them", async () => {
+  await page.click("text=Reset and Clear");
   await page.waitForSelector("text=Also remove the 1 photo you attached");
   assert.equal(await page.isChecked(".modal input[type=checkbox]"), true);
   await page.uncheck(".modal input[type=checkbox]");
@@ -140,7 +140,7 @@ test("Remove deletes a photo, and the default checked box clears all photos", as
   await page.waitForSelector("img.thumb", { state: "detached" });
   await addPhotoVia('button[aria-label="Add photo: First laugh"]');
   await page.waitForSelector("img.thumb");
-  await page.click("text=Attach new export");
+  await page.click("text=Reset and Clear");
   await page.click(".modal button:has-text('Clear')");
   await page.waitForURL(/index\.html\?cleared/);
   assert.equal(await storedPhotoCount(), 0);

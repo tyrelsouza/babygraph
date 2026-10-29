@@ -36,7 +36,7 @@ watch(() => section.value.name, async (name, prev) => {
   heading.value && heading.value.focus({ preventScroll: true }); // announce the new section
 }, { immediate: true });
 
-// ----- "Attach new export": confirm, then clear the stored export and go back to the landing page -----
+// ----- "Reset and Clear": confirm, then clear the stored export and go back to the landing page -----
 // Attached photos are removed by default, so nobody's left thinking they're kept somewhere. Unchecking keeps
 // them, and they re-link to the same Baby Firsts in a newer export.
 const confirmOpen = ref(false);
@@ -101,7 +101,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
               </svg>
               <span>Your data only lives in this browser. Nothing is uploaded, and there's no analytics. <a href="./privacy.html">Privacy</a></span>
             </div>
-            <button class="btn btn-outline-secondary btn-sm" type="button" @click="confirmOpen = true">Attach new export</button>
+            <button class="btn btn-outline-secondary btn-sm" type="button" @click="confirmOpen = true">Reset and Clear</button>
             <button class="btn btn-ghost-secondary btn-sm" type="button" @click="toggleTheme"
                     :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
               {{ theme === 'dark' ? 'Light mode' : 'Dark mode' }}
@@ -139,10 +139,10 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKeydown));
           <div class="modal-content">
             <div class="modal-status bg-danger"></div>
             <div class="modal-body text-center py-4">
-              <h3 id="new-export-title">Attach a new export?</h3>
+              <h3 id="new-export-title">Reset and clear this export?</h3>
               <div id="new-export-body" class="text-secondary">
                 Your export is only in this browser's local storage, never uploaded, so clearing it here means it's gone.
-                You'll need to attach a NaraBaby export again to see the dashboard.
+                You'll be back at the start, where you can load a newer export.
               </div>
               <label v-if="photoCount" class="form-check text-start mt-3 mb-0">
                 <input class="form-check-input" type="checkbox" v-model="alsoPhotos" />
