@@ -73,15 +73,12 @@ test("landing page links to the license files, and they're served", async () => 
   }
 });
 
-test("the privacy policy is linked, and its Caddy config links work", async () => {
+test("the privacy policy is linked, and links to the Caddy config on GitHub", async () => {
   await t.page.goto(t.url("/index.html"));
   assert.equal(await t.count('a[href="./privacy.html"]'), 2); // the local-only callout and the footer
   await t.page.click("footer a[href='./privacy.html'], .card-footer a[href='./privacy.html']");
   await t.page.waitForSelector("h1:text('Privacy policy')");
   assert.equal(await t.count('a[href="https://github.com/tyrelsouza/babygraph/blob/main/deploy/Caddyfile.example"]'), 1);
-  const res = await t.page.request.get(t.url("/Caddyfile.example"));
-  assert.equal(res.status(), 200);
-  assert.match(await res.text(), /file_server/);
 });
 
 test("nothing is sent anywhere: only GETs for the site's own files, no request bodies, no cookies", async () => {

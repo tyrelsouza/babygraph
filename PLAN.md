@@ -364,7 +364,7 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
   - no collection or use of data, ever;
   - no analytics, tracking, ads, cookies or third-party resources;
   - server logging is ordinary request logging only (time, IP, file, user agent), never content.
-- The policy links to `deploy/Caddyfile.example` on GitHub and to a copy shipped in `dist/` (emitted by the Vite plugin, served as text/plain). It lists the three browser storage keys (`nara-import`, `nara-photos`, `nara-theme`).
+- The policy links to `deploy/Caddyfile.example` on GitHub. (A copy shipped in `dist/` was tried and removed as redundant.) It lists the three browser storage keys (`nara-import`, `nara-photos`, `nara-theme`).
 - **Checked:** neither the source nor the bundles send data. The only network code is Papa Parse's unused remote download and Vite's modulepreload of its own chunks.
 - **e2e:**
   - every request during upload and browsing is a GET to the site's own origin with no body, and no cookies are set;

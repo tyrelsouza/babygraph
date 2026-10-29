@@ -1,7 +1,7 @@
 <script setup>
+import { REPO_URL as REPO } from "./lib/site.js";
 import { theme, toggleTheme } from "./lib/theme.js";
 
-const REPO = "https://github.com/tyrelsouza/babygraph";
 const UPDATED = "October 29, 2026";
 </script>
 
@@ -52,8 +52,7 @@ const UPDATED = "October 29, 2026";
       </p>
       <p>
         The server config is public:
-        <a :href="REPO + '/blob/main/deploy/Caddyfile.example'">deploy/Caddyfile.example</a>
-        (<a href="./Caddyfile.example">copy on this site</a>). It doesn't turn on access logs.
+        <a :href="REPO + '/blob/main/deploy/Caddyfile.example'">deploy/Caddyfile.example</a>. It doesn't turn on access logs.
       </p>
 
       <h2 class="h3">What's stored in your browser</h2>

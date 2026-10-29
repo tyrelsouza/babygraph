@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { fmtDate } from "./lib/format.js";
 import { ImportError, parseNaraExport } from "./lib/importer.js";
+import { BUILD, commitUrl } from "./lib/site.js";
 import { loadImport, saveImport } from "./lib/storage.js";
 import { theme, toggleTheme } from "./lib/theme.js";
 
@@ -129,6 +130,11 @@ const openPicker = () => !busy.value && fileInput.value.click();
         <div class="card-footer small text-secondary">
           Unofficial; not affiliated with NaraBaby. Free and open source (MIT).
           <a href="./privacy.html">Privacy</a> · <a href="./NOTICE.md">Notices</a> · <a href="./THIRD-PARTY-LICENSES.md">Licenses</a>
+          <div v-if="BUILD.commit" class="mt-1" data-build>
+            Built from commit
+            <a :href="commitUrl(BUILD.commit)" :title="BUILD.commit"><code>{{ BUILD.commit.slice(0, 7) }}</code></a>
+            <span v-if="BUILD.dirty"> + local changes</span>
+          </div>
         </div>
       </section>
     </div>
