@@ -45,6 +45,11 @@ test("Feeding loads ApexCharts and its five charts", async () => {
   assert.equal(c.canvas, 1);
 });
 
+test("a one-month export shows daily feed bars with the 7-day average", async () => {
+  assert.equal(await page.getAttribute("[data-feeds-mode]", "data-mode"), "daily");
+  assert.equal(await t.count("#apexchartsfeeds .apexcharts-line-series path.apexcharts-line"), 1);
+});
+
 test("dragging the zoom strip zooms the charts", async () => {
   unzoomed = await feedsMin();
   const rb = await (await page.$("#apexchartsfeeds-brush .apexcharts-selection-rect")).boundingBox();

@@ -3,6 +3,7 @@
 //   BABYGRAPH_EXPORT=~/Downloads/export_narababy_<name>_<date>.csv npm run e2e
 import assert from "node:assert/strict";
 import { after, before, describe, test } from "node:test";
+import { DAILY_MAX_DAYS } from "../src/lib/feedSeries.js";
 import { isFever } from "../src/lib/health.js";
 import { REAL_EXPORT, parsed, setup } from "./helpers.js";
 
@@ -46,6 +47,34 @@ describe("real export", { skip: !REAL_EXPORT && "set BABYGRAPH_EXPORT to run" },
     await report(ctx, "feeding");
     await t.go("growth", ".apexcharts-canvas");
     await report(ctx, "growth");
+  });
+
+  test("Feeds per day: weekly bars until zoomed to 4 months or less, then daily", async (ctx) => {
+    const spanDays = data.daily.length;
+    if (spanDays <= DAILY_MAX_DAYS) return ctx.skip(`export spans only ${spanDays} days`);
+    await t.go("feeding", "[aria-busy]");
+    await page.waitForFunction(() => document.querySelectorAll("[aria-busy=false]").length >= 5);
+    const mode = () => page.getAttribute("[data-feeds-mode]", "data-mode");
+    const avgLines = () => t.count("#apexchartsfeeds .apexcharts-line-series path.apexcharts-line");
+    assert.equal(await mode(), "weekly");
+    assert.equal(await avgLines(), 0);
+
+    // Drag the strip's left edge until the window is under the daily limit, then back out
+    const dragLeftEdge = async (dx) => {
+      const rb = await (await page.$("#apexchartsfeeds-brush .apexcharts-selection-rect")).boundingBox();
+      await page.mouse.move(rb.x + 1, rb.y + rb.height / 2);
+      await page.mouse.down();
+      for (let i = 1; i <= 10; i++) await page.mouse.move(rb.x + 1 + (dx * i) / 10, rb.y + rb.height / 2);
+      await page.mouse.up();
+    };
+    const strip = await (await page.$("#apexchartsfeeds-brush .apexcharts-selection-rect")).boundingBox();
+    await dragLeftEdge(strip.width * (1 - (DAILY_MAX_DAYS * 0.7) / spanDays));
+    await page.waitForFunction(() => document.querySelector("[data-feeds-mode]").dataset.mode === "daily", null, { timeout: 5000 });
+    assert.equal(await avgLines(), 1);
+    await dragLeftEdge(-strip.width);
+    await page.waitForFunction(() => document.querySelector("[data-feeds-mode]").dataset.mode === "weekly", null, { timeout: 5000 });
+    assert.equal(await avgLines(), 0);
+    await report(ctx, "feeding after zooming");
   });
 
   test("Measurements lists every measurement", async (ctx) => {

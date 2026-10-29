@@ -283,7 +283,25 @@ Feeding used to stay blank and then show every chart at once, because ApexCharts
 - **Section skeleton:** `FeedingSkeleton.vue` is Feeding's loading component while its code chunk (with ApexCharts) downloads. It has the same cards and chart heights, so the page doesn't move when the real section arrives. Measured card positions are identical before and after load.
 - ApexCharts adds 15 px below each SVG, so slots reserve `height + 15`.
 - **Results (real export):** skeletons paint about 100 ms after the click, and all charts are in by about 550–700 ms. The longest task is now about 400 ms instead of about 550 ms. "Feeds per day" alone accounts for nearly all of it; the other charts take about 20 ms each.
-- Later: make "Feeds per day" cheaper to draw (about 900 stacked bars). It's the one slow chart.
+- Later: make "Feeds per day" cheaper to draw (about 900 stacked bars). It's the one slow chart. **Done: see "Weekly feed bars" below.**
+
+## Weekly feed bars until zoomed (built, 2026-10-29)
+- **Question:** would streaming points in batches (50 at a time from the right) be faster? Measured on 445 days of synthetic data:
+  - everything at once: about 470 ms;
+  - streaming: about 760 ms in total, because each batch redraws the whole chart (8 updates, up to 155 ms each);
+  - weekly bars: about 33 ms.
+- **Decision:** don't stream; draw fewer bars. `src/lib/feedSeries.js`:
+  - windows longer than `DAILY_MAX_DAYS` (120) show one bar per Sunday-start week. Each bar is the average breast and bottle feeds per day, stacked, and partial weeks are averaged over their own days;
+  - at 120 days or less, daily bars plus the 7-day average line, with only the days in the window (±1) drawn;
+  - the zoom strip's selection calls `updateOptions` on the feeds chart with the new series. The milk and nursing charts still just `zoomX`;
+  - the subtitle and tooltip follow the mode ("Week of Jul 30, 2023 · Breast 13.0 a day").
+- **Results (real export):**
+  - opening Feeding: the longest task fell from about 400–550 ms to about 60 ms, the section opens in about 220 ms, and it has about 850 elements instead of about 2,150;
+  - switching modes takes about 55–85 ms.
+- **Tests:**
+  - unit tests for week grouping (partial weeks, a DST week), the 120-day boundary, and series shape;
+  - e2e: the fake one-month export stays daily; the real-export suite checks weekly → daily → weekly by dragging the strip.
+- **Real export note:** the user deleted the lone 2024-05-21 bottle feed from their local copy (it left a two-month empty gap), so feeding data now ends 2024-03-08 (5,072 feeds).
 
 ## Baby's Firsts (built)
 
