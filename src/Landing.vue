@@ -31,6 +31,22 @@ async function handleFile(file) {
   }
 }
 
+// The fake boy export from fixtures/, bundled as its own chunk so it only downloads when asked for
+const DEMO_NAME = "Demo data (Test Boy, made up)";
+async function loadDemo() {
+  if (stored && !window.confirm("Load the demo? It replaces the export loaded in this browser. Photos you added are kept.")) return;
+  error.value = "";
+  busy.value = true;
+  try {
+    const { default: csv } = await import("../fixtures/narababy_fake_boy_export.csv?raw");
+    saveImport(parseNaraExport(csv, DEMO_NAME), DEMO_NAME);
+    window.location.assign("./dashboard.html");
+  } catch (e) {
+    error.value = e.message || "Couldn't load the demo data.";
+    busy.value = false;
+  }
+}
+
 function onDrop(e) {
   dragDepth.value = 0;
   handleFile(e.dataTransfer.files[0]);
@@ -82,6 +98,14 @@ const openPicker = () => !busy.value && fileInput.value.click();
             <div id="drop-help" class="text-secondary small">or click to choose the <code>.csv</code> file</div>
           </div>
           <input ref="fileInput" type="file" accept=".csv,text/csv" class="d-none" @change="onPick">
+
+          <div class="text-center mt-3">
+            <span class="text-secondary small">No export handy?</span>
+            <button type="button" class="btn btn-sm btn-outline-primary ms-1" :disabled="busy" @click="loadDemo">
+              Try it with demo data
+            </button>
+            <div class="text-secondary small mt-1">A made-up month for a fictional baby boy.</div>
+          </div>
 
           <div v-if="error" class="alert alert-danger mt-3 mb-0" role="alert">{{ error }}</div>
 

@@ -53,6 +53,9 @@ and any photos you add are stored in IndexedDB.
 Because it's all local, the data lives only in that browser. Clearing site data or switching browsers means
 uploading the export again, and photos you added need re-adding, so keep your originals.
 
+No export? "Try it with demo data" on the landing page loads the fake boy export from `fixtures/`. It's
+bundled with the site and only downloaded when you click, so it's still just the site's own files.
+
 Real exports are never committed: `.gitignore` excludes `export_narababy_*.csv`.
 
 ## Running it

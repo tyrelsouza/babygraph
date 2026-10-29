@@ -391,6 +391,12 @@ NaraBaby's export drops photos; only the app's internal file name survives, so n
   - Assert on counts, not Playwright element handles. A failing assert on a handle tries to print the whole object and ran the test process out of memory (SIGKILL).
   - `go()` waits for the page title to switch, because the old section's content lingers for a tick.
 
+### Demo data button (2026-10-29)
+- The landing page has "Try it with demo data" under the drop zone. It loads `fixtures/narababy_fake_boy_export.csv` (Test Boy, one made-up month) through the normal parser and saves it as "Demo data (Test Boy, made up)", which shows as the file name on the dashboard.
+- The CSV is a dynamic `import("…?raw")`, so Vite emits it as its own chunk (238 KB, 26 KB gzipped) that only downloads on click. It's a same-origin file, so the CSP and the "nothing is sent anywhere" test still hold.
+- If an export is already stored, it asks before replacing it. Added photos are kept; ones that don't match the demo show up as orphans in Firsts, same as any other new upload.
+- e2e: the demo loads Test Boy with the demo label; with an export stored, cancelling the confirm leaves it alone and accepting replaces it.
+
 ### Deployment: Caddy serves the files (2026-10-29)
 - **Decision:** no runtime container. The site is static and Caddy already runs on the host, so an nginx container behind Caddy added a process and a port for nothing. A first version did that (unprivileged nginx bound to 127.0.0.1:8090, which passed all tests), but it was replaced.
 - **Deploy:** `npm ci && npm run build`, then `rsync -a --delete dist/ server:/srv/babygraph/`.

@@ -59,6 +59,29 @@ test("Clear and upload removes the data and shows a notice", async () => {
   assert.equal(await t.page.evaluate(() => localStorage.getItem("nara-import")), null);
 });
 
+test("the demo button loads the made-up boy, labelled as demo data", async () => {
+  await t.page.click("text=Try it with demo data");
+  await t.page.waitForURL(/dashboard\.html#\/overview$/);
+  await t.page.waitForSelector("text=Latest growth");
+  assert.match(await t.page.textContent(".navbar-brand"), /Test Boy/);
+  assert.match(await t.page.textContent(".page-pretitle"), /Demo data \(Test Boy, made up\)/);
+});
+
+test("with an export already loaded, the demo asks before replacing it", async () => {
+  await t.upload(GIRL);
+  await t.page.goto(t.url("/index.html"));
+  t.page.once("dialog", (d) => d.dismiss());
+  await t.page.click("text=Try it with demo data");
+  await t.page.waitForTimeout(300);
+  assert.ok(t.page.url().endsWith("/index.html"), "stays put when cancelled");
+  assert.match(await t.page.textContent(".card-sm"), /Test Girl/);
+  t.page.once("dialog", (d) => d.accept());
+  await t.page.click("text=Try it with demo data");
+  await t.page.waitForURL(/dashboard\.html/);
+  await t.page.waitForSelector("text=Latest growth");
+  assert.match(await t.page.textContent(".navbar-brand"), /Test Boy/);
+});
+
 test("the file picker works, and the landing page then offers to reopen", async () => {
   await t.upload(BOY);
   assert.match(await t.page.textContent(".navbar-brand"), /Test Boy/);
