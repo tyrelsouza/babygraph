@@ -3,6 +3,8 @@
 Turn your baby tracker export into charts and timelines. Supports NaraBaby CSV exports.
 Runs in your browser; nothing is uploaded.
 
+Demo at [https://babygraph.bueauofsidequests.com](https://babygraph.bueauofsidequests.com) - OR you can self host with an `npm i && npm run dev`.
+
 ## Why
 
 NaraBaby started charging, and without a subscription your account goes read-only. You can still
